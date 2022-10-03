@@ -1,3 +1,4 @@
+
 import java.io.*;
 
 public class Basket {
@@ -45,7 +46,6 @@ public class Basket {
         }
     }
 
-
     public static Basket loadFromTxtFile(File file) {
         Basket basket = null;
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -67,5 +67,22 @@ public class Basket {
             System.out.println(ex.getMessage());
         }
         return basket;
+    }
+
+    public void saveJson(File file) {
+        try (FileWriter writer = new FileWriter(file)) {
+            GsonBuilder builder = new GsonBuilder();
+            Gson gson = builder.setPrettyPrinting().create();
+            writer.write(gson.toJson(this, Basket.class));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static Basket loadFromJson(File file) throws FileNotFoundException{
+        Gson gson = new Gson();
+        FileReader reader = new FileReader(file);
+        return gson.fromJson(reader, Basket.class);
     }
 }

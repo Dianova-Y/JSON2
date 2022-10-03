@@ -5,14 +5,18 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        File file = new File("basket.txt");
+        //File file = new File("basket.txt");
+        File jsonFile = new File("basket.json");
+        File logFile = new File("log.csv");
+
         String[] products = {"Молоко", "Яблоки", "Сыр", "картофель", "Хлеб"};
         int[] prices = {80, 50, 200, 35, 45};
         Basket basket;
+        ClientLog clientLog = new ClientLog();
 
-        if (file.exists()) {
+        if (jsonFile.exists()) {
             System.out.println("Загружаю корзину: ");
-            basket = Basket.loadFromTxtFile(file);
+            basket = Basket.loadFromJson(jsonFile);
             basket.printCart();
             System.out.println();
         } else {
@@ -29,7 +33,7 @@ public class Main {
             String input = scanner.nextLine();
             if (input.equals("end")) {
                 basket.printCart();
-                basket.saveTxt(file);
+                basket.saveJson(jsonFile);
                 break;
             }
 
@@ -37,7 +41,11 @@ public class Main {
             int numProduct = Integer.parseInt(parts[0]) - 1;
             int amount = Integer.parseInt(parts[1]);
             basket.addToCart(numProduct, amount);
+            clientLog.log(numProduct, amount);
         }
+
+        clientLog.exportAsCSV(logFile);
+       // basket.printCart();
     }
 }
 
